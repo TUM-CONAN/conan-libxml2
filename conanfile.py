@@ -16,7 +16,8 @@ class LibxmlConan(ConanFile):
         "patchs/CMakeLists.txt",
         "patchs/CMakeProjectWrapper.txt",
         "patchs/config.linux.h",
-        "patchs/config.osx.h"
+        "patchs/config.osx.h",
+        "patchs/FindIconv.cmake"
     ]
     url = "https://gitlab.lan.local/conan/conan-libxml2"
     source_subfolder = "source_subfolder"
@@ -27,7 +28,7 @@ class LibxmlConan(ConanFile):
         if tools.os_info.is_windows:
             self.requires("winiconv/0.0.8@fw4spl/stable")
 
-    def build_requirements(self):
+    def system_requirements(self):
         if tools.os_info.is_linux:
             pack_names = ["libiconv-hook-dev"]
 
@@ -60,6 +61,7 @@ class LibxmlConan(ConanFile):
         shutil.move("patchs/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
         shutil.move("patchs/config.linux.h", "%s/config.linux.h" % libxml2_source_dir)
         shutil.move("patchs/config.osx.h", "%s/config.osx.h" % libxml2_source_dir)
+        shutil.move("patchs/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
         cmake = CMake(self)
         cmake.configure(build_folder=self.build_subfolder)
         cmake.build()

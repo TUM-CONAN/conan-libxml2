@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.5)
 
 project(libxml2 C)
 
@@ -6,6 +6,11 @@ option(INSTALL_HEADERS "Install public header files" ON)
 
 set(CMAKE_SHARED_LIBRARY_PREFIX)
 set(CMAKE_STATIC_LIBRARY_PREFIX)
+
+if(${CMAKE_VERSION} VERSION_LESS "3.11.0") 
+    message(STATUS "Using custom CMake find_package to find lib Iconv")
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+endif()
 
 find_package(ZLIB REQUIRED)
 find_package(iconv REQUIRED)
