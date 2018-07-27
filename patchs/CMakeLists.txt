@@ -7,13 +7,13 @@ option(INSTALL_HEADERS "Install public header files" ON)
 set(CMAKE_SHARED_LIBRARY_PREFIX)
 set(CMAKE_STATIC_LIBRARY_PREFIX)
 
-if(${CMAKE_VERSION} VERSION_LESS "3.11.0") 
-    message(STATUS "Using custom CMake find_package to find lib Iconv")
+if(${CMAKE_VERSION} VERSION_LESS "3.11.0")
+    message(STATUS "Using custom CMake find_package to find lib Iconv") 
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
 find_package(ZLIB REQUIRED)
-find_package(iconv REQUIRED)
+find_package(Iconv REQUIRED)
 
 file(GLOB SOURCES *.c)
 list(FILTER SOURCES EXCLUDE REGEX "/(run|test|trio)[^/]*$")

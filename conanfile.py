@@ -3,7 +3,7 @@
 
 import os
 import shutil
-from conans import CMake, ConanFile, tools
+from conans import CMake, ConanFile, AutoToolsBuildEnvironment, tools
 
 class LibxmlConan(ConanFile):
     name = "libxml2"
@@ -15,8 +15,6 @@ class LibxmlConan(ConanFile):
     exports = [
         "patchs/CMakeLists.txt",
         "patchs/CMakeProjectWrapper.txt",
-        "patchs/config.linux.h",
-        "patchs/config.osx.h",
         "patchs/FindIconv.cmake"
     ]
     url = "https://gitlab.lan.local/conan/conan-libxml2"
@@ -48,24 +46,36 @@ class LibxmlConan(ConanFile):
             del self.options.fPIC
 
     def configure(self):
-        self.requires("zlib/1.2.11@fw4spl/stable")
-        if tools.os_info.is_windows:
-            self.requires("winiconv/0.0.8@fw4spl/stable")
         del self.settings.compiler.libcxx
         if self.settings.os == "Windows" and not self.options.shared:
             self.output.warn("Warning! Static builds in Windows are unstable")
 
     def build(self):
-        libxml2_source_dir = os.path.join(self.source_folder, self.source_subfolder)
-        shutil.move("patchs/CMakeProjectWrapper.txt", "CMakeLists.txt")
-        shutil.move("patchs/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
-        shutil.move("patchs/config.linux.h", "%s/config.linux.h" % libxml2_source_dir)
-        shutil.move("patchs/config.osx.h", "%s/config.osx.h" % libxml2_source_dir)
-        shutil.move("patchs/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
-        cmake = CMake(self)
-        cmake.configure(build_folder=self.build_subfolder)
-        cmake.build()
-        cmake.install()
+        if self.settings.os == "Windows":
+            libxml2_source_dir = os.path.join(self.source_folder, self.source_subfolder)
+            shutil.move("patchs/CMakeProjectWrapper.txt", "CMakeLists.txt")
+            shutil.move("patchs/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
+            shutil.move("patchs/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
+            cmake = CMake(self)
+            cmake.configure(build_folder=self.build_subfolder)
+            cmake.build()
+            cmake.install()
+        else:
+            env_build = AutoToolsBuildEnvironment(self)
+            env_build.fpic = self.options.fPIC
+            with tools.environment_append(env_build.vars):
+                with tools.chdir(self.source_subfolder):
+                    # fix rpath
+                    if self.settings.os == "Macos":
+                        tools.replace_in_file("configure", r"-install_name \$rpath/", "-install_name ")
+                    configure_args = ['--with-python=no', '--without-lzma']
+                    if self.options.shared:
+                        configure_args.extend(['--enable-shared', '--disable-static'])
+                    else:
+                        configure_args.extend(['--enable-static', '--disable-shared'])
+                    env_build.configure(args=configure_args)
+                    env_build.make()
+                    env_build.install()
 
     def package(self):
         self.copy("FindLibXml2.cmake", ".", ".")
