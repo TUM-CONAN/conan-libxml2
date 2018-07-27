@@ -15,7 +15,8 @@ class LibxmlConan(ConanFile):
     exports = [
         "patchs/CMakeLists.txt",
         "patchs/CMakeProjectWrapper.txt",
-        "patchs/FindIconv.cmake"
+        "patchs/FindIconv.cmake",
+        "patchs/xmlversion.h.patch"
     ]
     url = "https://gitlab.lan.local/conan/conan-libxml2"
     source_subfolder = "source_subfolder"
@@ -56,6 +57,7 @@ class LibxmlConan(ConanFile):
             shutil.move("patchs/CMakeProjectWrapper.txt", "CMakeLists.txt")
             shutil.move("patchs/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
             shutil.move("patchs/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
+            tools.patch(libxml2_source_dir, "patchs/xmlversion.h.patch")
             cmake = CMake(self)
             cmake.configure(build_folder=self.build_subfolder)
             cmake.build()

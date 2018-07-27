@@ -1,0 +1,20 @@
+diff --git a/include/libxml/xmlversion.h b/include/libxml/xmlversion.h
+index fa7bd9b..61a2c04 100644
+--- a/include/libxml/xmlversion.h
++++ b/include/libxml/xmlversion.h
+@@ -400,15 +400,6 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
+ #define LIBXML_ZLIB_ENABLED
+ #endif
+ 
+-/**
+- * LIBXML_LZMA_ENABLED:
+- *
+- * Whether the Lzma support is compiled in
+- */
+-#if 1
+-#define LIBXML_LZMA_ENABLED
+-#endif
+-
+ #ifdef __GNUC__
+ 
+ /**
