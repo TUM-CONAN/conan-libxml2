@@ -13,10 +13,10 @@ class LibxmlConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=True", "fPIC=True"
     exports = [
-        "patchs/CMakeLists.txt",
-        "patchs/CMakeProjectWrapper.txt",
-        "patchs/FindIconv.cmake",
-        "patchs/xmlversion.h.patch"
+        "patches/CMakeLists.txt",
+        "patches/CMakeProjectWrapper.txt",
+        "patches/FindIconv.cmake",
+        "patches/xmlversion.h.patch"
     ]
     url = "https://gitlab.lan.local/conan/conan-libxml2"
     source_subfolder = "source_subfolder"
@@ -54,10 +54,10 @@ class LibxmlConan(ConanFile):
     def build(self):
         if self.settings.os == "Windows":
             libxml2_source_dir = os.path.join(self.source_folder, self.source_subfolder)
-            shutil.move("patchs/CMakeProjectWrapper.txt", "CMakeLists.txt")
-            shutil.move("patchs/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
-            shutil.move("patchs/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
-            tools.patch(libxml2_source_dir, "patchs/xmlversion.h.patch")
+            shutil.move("patches/CMakeProjectWrapper.txt", "CMakeLists.txt")
+            shutil.move("patches/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
+            shutil.move("patches/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
+            tools.patch(libxml2_source_dir, "patches/xmlversion.h.patch")
             cmake = CMake(self)
             cmake.configure(build_folder=self.build_subfolder)
             cmake.build()
