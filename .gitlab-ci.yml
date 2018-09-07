@@ -11,6 +11,24 @@ variables:
 stages:
   - build
 
+msvc2015:
+  image: greenjava/vcbuild2015:1.0
+  stage: build
+  script:
+    - python build.py
+  tags:
+    - docker
+    - windows
+
+msvc2017:
+  image: greenjava/vcbuild2017:1.0
+  stage: build
+  script:
+    - python build.py
+  tags:
+    - docker
+    - windows
+
 .conan-template: &conan-template
   stage: build
   before_script:
