@@ -22,6 +22,9 @@ class LibxmlConan(ConanFile):
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 
+    def configure(self):
+        del self.settings.compiler.libcxx
+
     def requirements(self):
         self.requires("zlib/1.2.11@fw4spl/stable")
         if tools.os_info.is_windows:
