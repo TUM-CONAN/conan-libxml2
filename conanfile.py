@@ -10,8 +10,8 @@ class LibxmlConan(ConanFile):
     version = "2.9.8"
     generators = "cmake"
     settings =  "os", "compiler", "arch", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = "shared=True", "fPIC=True"
+    options = {"shared": [True, False]}
+    default_options = "shared=True"
     exports = [
         "patches/CMakeLists.txt",
         "patches/CMakeProjectWrapper.txt",
@@ -44,10 +44,6 @@ class LibxmlConan(ConanFile):
     def source(self):
         tools.get("http://xmlsoft.org/sources/libxml2-{0}.tar.gz".format(self.version))
         os.rename("libxml2-{0}".format(self.version), self.source_subfolder)
-        
-    def config_options(self):
-        if tools.os_info.is_windows:
-            del self.options.fPIC
 
     def configure(self):
         del self.settings.compiler.libcxx
@@ -67,7 +63,7 @@ class LibxmlConan(ConanFile):
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
-            env_build.fpic = self.options.fPIC
+            env_build.fpic = True
             with tools.environment_append(env_build.vars):
                 with tools.chdir(self.source_subfolder):
                     # fix rpath
