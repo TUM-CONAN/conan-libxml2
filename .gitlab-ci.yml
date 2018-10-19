@@ -27,3 +27,15 @@ msvc2017:
   tags:
     - docker
     - windows
+    
+macos:
+  stage: build
+  variables:
+    CONAN_APPLE_CLANG_VERSIONS: "9.1"
+    CONAN_USER_HOME: $CI_PROJECT_DIR
+  script:
+    - pip3 install conan_package_tools
+    - pip3 install conan
+    - python3 build.py
+  tags:
+    - macos
