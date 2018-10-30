@@ -16,6 +16,7 @@ class LibxmlConan(ConanFile):
         "patches/CMakeLists.txt",
         "patches/CMakeProjectWrapper.txt",
         "patches/FindIconv.cmake",
+        "patches/FindLibXml2.cmake",
         "patches/xmlversion.h.patch"
     ]
     url = "https://gitlab.lan.local/conan/conan-libxml2"
@@ -79,7 +80,7 @@ class LibxmlConan(ConanFile):
                     env_build.install()
 
     def package(self):
-        self.copy("FindLibXml2.cmake", ".", ".")
+        self.copy("FindLibXml2.cmake", src="patches", dst=".", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
