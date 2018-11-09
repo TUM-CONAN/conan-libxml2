@@ -25,6 +25,8 @@ class LibxmlConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        if 'CI' not in os.environ:
+            os.environ["CONAN_SYSREQUIRES_MODE"] = "verify"
 
     def requirements(self):
         if not tools.os_info.is_linux:
@@ -32,15 +34,25 @@ class LibxmlConan(ConanFile):
         if tools.os_info.is_windows:
             self.requires("winiconv/0.0.8@sight/stable")
 
-    def system_requirements(self):
+    def build_requirements(self):
         if tools.os_info.is_linux:
             pack_names = [
                 "libiconv-hook-dev",
                 "zlib1g-dev"
             ]
             installer = tools.SystemPackageTool()
-            installer.update()
-            installer.install(" ".join(pack_names))
+            for p in pack_names:
+                installer.install(p)
+
+    def system_requirements(self):
+        if tools.os_info.is_linux:
+            pack_names = [
+                "libiconv-hook1",
+                "zlib1g"
+            ]
+            installer = tools.SystemPackageTool()
+            for p in pack_names:
+                installer.install(p)
 
     def source(self):
         tools.get("http://xmlsoft.org/sources/libxml2-{0}.tar.gz".format(self.version))
