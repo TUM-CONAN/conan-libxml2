@@ -19,7 +19,7 @@ class LibxmlConan(ConanFile):
         "patches/FindLibXml2.cmake",
         "patches/xmlversion.h.patch"
     ]
-    url = "https://gitlab.lan.local/conan/conan-libxml2"
+    url = "https://git.ircad.fr/conan/conan-libxml2"
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 

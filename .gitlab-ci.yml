@@ -5,13 +5,15 @@ variables:
 stages:
   - build
 
+before_script:
+  - git -c http.sslVerify=false clone --depth 1 https://gitlab-ci-token:${CI_JOB_TOKEN}@git.ircad.fr/conan/conan.git
+
 msvc2017:
   stage: build
   variables:
     CONAN_VISUAL_VERSIONS: "15"
     CONAN_USER_HOME: $CI_PROJECT_DIR
   script:
-    - git -c http.sslVerify=false clone --depth 1 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lan.local/conan/conan.git
     - python conan/gitlab-ci/build.py
   tags:
     - shell
