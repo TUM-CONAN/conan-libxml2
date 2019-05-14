@@ -7,7 +7,9 @@ from conans import CMake, ConanFile, AutoToolsBuildEnvironment, tools
 
 class LibxmlConan(ConanFile):
     name = "libxml2"
-    version = "2.9.8"
+    package_revision = "-r1"
+    upstream_version = "2.9.8"
+    version = "{0}{1}".format(upstream_version, package_revision)
     generators = "cmake"
     settings =  "os", "compiler", "arch", "build_type"
     options = {"shared": [True, False]}
@@ -29,10 +31,9 @@ class LibxmlConan(ConanFile):
             os.environ["CONAN_SYSREQUIRES_MODE"] = "verify"
 
     def requirements(self):
-        if not tools.os_info.is_linux:
-            self.requires("zlib/1.2.11@sight/stable")
         if tools.os_info.is_windows:
-            self.requires("winiconv/0.0.8@sight/stable")
+            self.requires("zlib/1.2.11-r1@sight/stable")
+            self.requires("winiconv/0.0.8-r1@sight/stable")
 
     def build_requirements(self):
         if tools.os_info.is_linux:
@@ -55,8 +56,8 @@ class LibxmlConan(ConanFile):
                 installer.install(p)
 
     def source(self):
-        tools.get("http://xmlsoft.org/sources/libxml2-{0}.tar.gz".format(self.version))
-        os.rename("libxml2-{0}".format(self.version), self.source_subfolder)
+        tools.get("http://xmlsoft.org/sources/libxml2-{0}.tar.gz".format(self.upstream_version))
+        os.rename("libxml2-{0}".format(self.upstream_version), self.source_subfolder)
 
     def configure(self):
         del self.settings.compiler.libcxx
