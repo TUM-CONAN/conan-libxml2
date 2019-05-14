@@ -31,10 +31,9 @@ class LibxmlConan(ConanFile):
             os.environ["CONAN_SYSREQUIRES_MODE"] = "verify"
 
     def requirements(self):
-        if not tools.os_info.is_linux:
-            self.requires("zlib/1.2.11-r1@sight/testing")
         if tools.os_info.is_windows:
-            self.requires("winiconv/0.0.8-r1@sight/testing")
+            self.requires("zlib/1.2.11-r1@sight/stable")
+            self.requires("winiconv/0.0.8-r1@sight/stable")
 
     def build_requirements(self):
         if tools.os_info.is_linux:
