@@ -7,7 +7,7 @@ from conans import CMake, ConanFile, AutoToolsBuildEnvironment, tools
 
 class LibxmlConan(ConanFile):
     name = "libxml2"
-    package_revision = "-r1"
+    package_revision = "-r2"
     upstream_version = "2.9.8"
     version = "{0}{1}".format(upstream_version, package_revision)
     generators = "cmake"
@@ -31,9 +31,10 @@ class LibxmlConan(ConanFile):
             os.environ["CONAN_SYSREQUIRES_MODE"] = "verify"
 
     def requirements(self):
+        self.requires("common/1.0.0@sight/stable")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11-r1@sight/stable")
-            self.requires("winiconv/0.0.8-r1@sight/stable")
+            self.requires("zlib/1.2.11-r2@sight/testing")
+            self.requires("winiconv/0.0.8-r2@sight/testing")
 
     def build_requirements(self):
         if tools.os_info.is_linux:
@@ -65,6 +66,8 @@ class LibxmlConan(ConanFile):
             self.output.warn("Warning! Static builds in Windows are unstable")
 
     def build(self):
+        #Import common flags and defines
+        import common
         if self.settings.os == "Windows":
             libxml2_source_dir = os.path.join(self.source_folder, self.source_subfolder)
             shutil.move("patches/CMakeProjectWrapper.txt", "CMakeLists.txt")
@@ -72,6 +75,11 @@ class LibxmlConan(ConanFile):
             shutil.move("patches/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
             tools.patch(libxml2_source_dir, "patches/xmlversion.h.patch")
             cmake = CMake(self)
+            
+            #Set common flags
+            cmake.definitions["CMAKE_C_FLAGS"] = common.get_c_flags()
+            cmake.definitions["CMAKE_CXX_FLAGS"] = common.get_cxx_flags()
+            
             cmake.configure(build_folder=self.build_subfolder)
             cmake.build()
             cmake.install()
