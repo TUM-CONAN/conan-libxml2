@@ -75,7 +75,8 @@ class LibxmlConan(ConanFile):
             shutil.move("patches/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
             shutil.move("patches/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
             tools.patch(libxml2_source_dir, "patches/xmlversion.h.patch")
-            cmake = CMake(self)
+
+            cmake = CMake(self, generator='Ninja')
             
             # Set common flags
             cmake.definitions["SIGHT_CMAKE_C_FLAGS"] = common.get_c_flags() + " --fuck "
@@ -90,8 +91,8 @@ class LibxmlConan(ConanFile):
 
             with tools.environment_append(env_build.vars):
                 with tools.environment_append({
-                    "CFLAGS": common.get_full_c_flags(build_type=self.settings.build_type) + " --fuck ",
-                    "CXXFLAGS": common.get_full_cxx_flags(build_type=self.settings.build_type) + " --fuck "
+                    "CFLAGS": common.get_full_c_flags(build_type=self.settings.build_type),
+                    "CXXFLAGS": common.get_full_cxx_flags(build_type=self.settings.build_type)
                 }):
                     with tools.chdir(self.source_subfolder):
                         # fix rpath
