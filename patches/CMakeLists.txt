@@ -59,6 +59,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
     target_compile_definitions(libxml2 PRIVATE
         -DHAVE_WIN32_THREADS
+        -D_WINSOCK_DEPRECATED_NO_WARNINGS
     )
 endif()
 

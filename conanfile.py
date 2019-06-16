@@ -76,7 +76,7 @@ class LibxmlConan(ConanFile):
             shutil.move("patches/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
             tools.patch(libxml2_source_dir, "patches/xmlversion.h.patch")
 
-            cmake = CMake(self, generator='Ninja')
+            cmake = CMake(self)
             
             # Set common flags
             cmake.definitions["SIGHT_CMAKE_C_FLAGS"] = common.get_c_flags()
