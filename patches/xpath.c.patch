@@ -1,0 +1,15 @@
+diff --git a/xpath.c b/xpath.c
+index f440696..92adbd9 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -485,10 +485,6 @@ int wrap_cmp( xmlNodePtr x, xmlNodePtr y );
+ #define INFINITY HUGE_VAL
+ #endif
+
+-double xmlXPathNAN = NAN;
+-double xmlXPathPINF = INFINITY;
+-double xmlXPathNINF = -INFINITY;
+-
+ /**
+  * xmlXPathInit:
+  *
