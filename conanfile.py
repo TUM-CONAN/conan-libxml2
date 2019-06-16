@@ -79,7 +79,7 @@ class LibxmlConan(ConanFile):
             cmake = CMake(self)
             
             # Set common flags
-            cmake.definitions["SIGHT_CMAKE_C_FLAGS"] = common.get_c_flags()
+            cmake.definitions["SIGHT_CMAKE_C_FLAGS"] = common.get_c_flags() + " /TC "
             cmake.definitions["SIGHT_CMAKE_CXX_FLAGS"] = common.get_cxx_flags()
             
             cmake.configure(build_folder=self.build_subfolder)
