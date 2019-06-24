@@ -19,8 +19,7 @@ class LibxmlConan(ConanFile):
         "patches/CMakeProjectWrapper.txt",
         "patches/FindIconv.cmake",
         "patches/FindLibXml2.cmake",
-        "patches/xmlversion.h.patch",
-        "patches/xpath.c.patch"
+        "patches/xmlversion.h.patch"
     ]
     url = "https://git.ircad.fr/conan/conan-libxml2"
     source_subfolder = "source_subfolder"
@@ -76,7 +75,6 @@ class LibxmlConan(ConanFile):
             shutil.move("patches/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
             shutil.move("patches/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
             tools.patch(libxml2_source_dir, "patches/xmlversion.h.patch")
-            tools.patch(libxml2_source_dir, "patches/xpath.c.patch")
 
             cmake = CMake(self)
             
