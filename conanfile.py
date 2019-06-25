@@ -7,7 +7,7 @@ from conans import CMake, ConanFile, AutoToolsBuildEnvironment, tools
 
 class LibxmlConan(ConanFile):
     name = "libxml2"
-    package_revision = "-r1"
+    package_revision = "-r2"
     upstream_version = "2.9.8"
     version = "{0}{1}".format(upstream_version, package_revision)
     generators = "cmake"
@@ -31,9 +31,10 @@ class LibxmlConan(ConanFile):
             os.environ["CONAN_SYSREQUIRES_MODE"] = "verify"
 
     def requirements(self):
+        self.requires("common/1.0.0@sight/stable")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11-r1@sight/stable")
-            self.requires("winiconv/0.0.8-r1@sight/stable")
+            self.requires("zlib/1.2.11-r2@sight/stable")
+            self.requires("winiconv/0.0.8-r2@sight/stable")
 
     def build_requirements(self):
         if tools.os_info.is_linux:
@@ -65,32 +66,49 @@ class LibxmlConan(ConanFile):
             self.output.warn("Warning! Static builds in Windows are unstable")
 
     def build(self):
+        # Import common flags and defines
+        import common
+
         if self.settings.os == "Windows":
             libxml2_source_dir = os.path.join(self.source_folder, self.source_subfolder)
             shutil.move("patches/CMakeProjectWrapper.txt", "CMakeLists.txt")
             shutil.move("patches/CMakeLists.txt", "%s/CMakeLists.txt" % libxml2_source_dir)
             shutil.move("patches/FindIconv.cmake", "%s/FindIconv.cmake" % libxml2_source_dir)
             tools.patch(libxml2_source_dir, "patches/xmlversion.h.patch")
+
             cmake = CMake(self)
+            
+            # Set common flags
+            cmake.definitions["SIGHT_CMAKE_C_FLAGS"] = common.get_c_flags()
+            cmake.definitions["SIGHT_CMAKE_CXX_FLAGS"] = common.get_cxx_flags()
+            
             cmake.configure(build_folder=self.build_subfolder)
             cmake.build()
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
             env_build.fpic = True
+
             with tools.environment_append(env_build.vars):
-                with tools.chdir(self.source_subfolder):
-                    # fix rpath
-                    if self.settings.os == "Macos":
-                        tools.replace_in_file("configure", r"-install_name \$rpath/", "-install_name ")
-                    configure_args = ['--with-python=no', '--without-lzma']
-                    if self.options.shared:
-                        configure_args.extend(['--enable-shared', '--disable-static'])
-                    else:
-                        configure_args.extend(['--enable-static', '--disable-shared'])
-                    env_build.configure(args=configure_args)
-                    env_build.make()
-                    env_build.install()
+                with tools.environment_append({
+                    "CFLAGS": common.get_full_c_flags(build_type=self.settings.build_type),
+                    "CXXFLAGS": common.get_full_cxx_flags(build_type=self.settings.build_type)
+                }):
+                    with tools.chdir(self.source_subfolder):
+                        # fix rpath
+                        if self.settings.os == "Macos":
+                            tools.replace_in_file("configure", r"-install_name \$rpath/", "-install_name ")
+                        
+                        configure_args = ['--with-python=no', '--without-lzma']
+                        
+                        if self.options.shared:
+                            configure_args.extend(['--enable-shared', '--disable-static'])
+                        else:
+                            configure_args.extend(['--enable-static', '--disable-shared'])
+
+                        env_build.configure(args=configure_args)
+                        env_build.make()
+                        env_build.install()
 
     def package(self):
         self.copy("FindLibXml2.cmake", src="patches", dst=".", keep_path=False)
