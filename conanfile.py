@@ -33,8 +33,8 @@ class LibxmlConan(ConanFile):
     def requirements(self):
         self.requires("common/1.0.0@sight/stable")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11-r2@sight/testing")
-            self.requires("winiconv/0.0.8-r2@sight/testing")
+            self.requires("zlib/1.2.11-r2@sight/stable")
+            self.requires("winiconv/0.0.8-r2@sight/stable")
 
     def build_requirements(self):
         if tools.os_info.is_linux:
