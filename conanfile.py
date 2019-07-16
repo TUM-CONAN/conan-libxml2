@@ -31,10 +31,10 @@ class LibxmlConan(ConanFile):
             os.environ["CONAN_SYSREQUIRES_MODE"] = "verify"
 
     def requirements(self):
-        self.requires("common/1.0.0@sight/stable")
+        self.requires("ircad_common/1.0.0@camposs/stable")
         if tools.os_info.is_windows:
-            self.requires("zlib/1.2.11-r2@sight/stable")
-            self.requires("winiconv/0.0.8-r2@sight/stable")
+            self.requires("zlib/1.2.11@camposs/stable")
+            self.requires("winiconv/0.0.8-r2@sight/stable") # not yet available !!
 
     def build_requirements(self):
         if tools.os_info.is_linux:
