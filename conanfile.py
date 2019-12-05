@@ -34,7 +34,7 @@ class LibxmlConan(ConanFile):
         self.requires("ircad_common/1.0.0@camposs/stable")
         if tools.os_info.is_windows:
             self.requires("zlib/1.2.11@camposs/stable")
-            self.requires("winiconv/0.0.8-r2@sight/stable") # not yet available !!
+            self.requires("winiconv/0.0.8-r2@camposs/stable")
 
     def build_requirements(self):
         if tools.os_info.is_linux:
